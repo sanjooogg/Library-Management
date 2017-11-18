@@ -10,12 +10,12 @@ long speedglobal=4500;
 void mainmenu();
 void searchID();
 void searchname();
-void membermainmenu();
-void searchmembers();
-void displaymembers();
+void memberMainMenu();
+void searchMembers();
+void displayMembers();
 void addmembers();
-void addbooks();
-void displaybooks();
+void addBooks();
+void displayBooks();
 void searchbooks();
 void searchBookID();
 void searchBookname();
@@ -24,7 +24,7 @@ void main()
 {
 	mainmenu();
 }
-void membermainmenu()
+void memberMainMenu()
 {
 	clrscr();
 	for(int i=17;i<=52;i++)
@@ -70,11 +70,11 @@ void membermainmenu()
 			break;
 		case 2:
 			clrscr();
-			searchmembers();
+			searchMembers();
 			break;
 		case 3:
 			clrscr();
-			displaymembers();
+			displayMembers();
 			break;
 		case 4: 
 			clrscr();
@@ -89,7 +89,7 @@ void membermainmenu()
 			gotoxy(18,14);
 			cout<<"ENTER any key to continue";
 			cin>>wait;
-			membermainmenu();
+			memberMainMenu();
 			break;
 	}
 }
@@ -132,7 +132,7 @@ void addmembers()                        //Function to Add new members
 	if(ch=='Y' || ch=='y')
 		addmembers();
 	else
-		membermainmenu();
+		memberMainMenu();
 }
 void Member :: getmembers()              //Member Function to obtain intial details of members
 {
@@ -158,7 +158,7 @@ void Member :: showmembers()            //Member Function to show intial details
 	cout<<"Membership package:"<<"BD-"<<fee;
 	cout<<endl;
 }
-void displaymembers()
+void displayMembers()
 {
 	char wait;
 	clrscr();
@@ -174,10 +174,10 @@ void displaymembers()
 	cout<<endl;
 	cout<<"\nENTER any key to continue:"<<" ";
 	cin>>wait;
-	membermainmenu();
+	memberMainMenu();
 }
 
-void searchmembers()
+void searchMembers()
 {
 	int op;
 	cout<<"How would you like to search for the member?"<<endl;
@@ -202,7 +202,7 @@ void searchmembers()
 		break;
 	case 3: 
 		clrscr();
-		membermainmenu();
+		memberMainMenu();
 		break;
 	}
 }
@@ -230,13 +230,13 @@ void searchID()
 		cout<<endl;
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
-		membermainmenu();
+		memberMainMenu();
 	}
 	else
 	{
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
-		membermainmenu();
+		memberMainMenu();
 	}
 }
 void searchname()
@@ -262,13 +262,13 @@ void searchname()
 		cout<<endl;
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
-		membermainmenu();
+		memberMainMenu();
 	}
 	else
 	{
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
-		membermainmenu();
+		memberMainMenu();
 	}
 }
 
@@ -360,7 +360,7 @@ void bookmainmenu()
 	{
 	case 1:
 		clrscr();
-		addbooks();
+		addBooks();
 		break;
 	case 2:
 		clrscr();
@@ -368,7 +368,7 @@ void bookmainmenu()
 		break;
 	case 3:
 		clrscr();
-		displaybooks();
+		displayBooks();
 		break;
 	case 4:
 		clrscr();
@@ -388,7 +388,7 @@ void bookmainmenu()
 	}
 }
 
-void addbooks()                        //Function to Add new members
+void addBooks()                        //Function to Add new members
 {
 	clrscr();
 	char ch;
@@ -412,12 +412,12 @@ void addbooks()                        //Function to Add new members
 	cout<<"Do you want to add more books?(Y/N)";
 	cin>> ch;
 	if(ch=='Y' || ch=='y')
-		addbooks();
+		addBooks();
 	else
 		bookmainmenu();
 }
 
-void displaybooks()
+void displayBooks()
 {
 	char wait;
 	clrscr();
@@ -537,7 +537,7 @@ void searchBookname()
 	{
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
-		membermainmenu();
+		memberMainMenu();
 	}
 }
 void searchBookauthor()
@@ -614,7 +614,7 @@ void mainmenu()
 	{
 	case 1:
 		clrscr();
-		membermainmenu();
+		memberMainMenu();
 		break;
 	case 2:
 		clrscr();
