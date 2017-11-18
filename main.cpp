@@ -6,6 +6,7 @@
 #include <fstream.h>
 #include <ctype.h>
 #include <stdio.h>
+#define ArraySize(array)	sizeof(array)/sizeof(array[0])
 long speedglobal=4500;
 void mainmenu();
 void searchID();
@@ -61,26 +62,14 @@ void center(char* word,int y=12.5)
 	cout<<word;
 }
 
-//Creates a menu with the given heading and the elements passed through the array
-void createMenu(char* word,char* array[]=NULL,int size=0,int step=3,int start=6)
+//Simplified gotoxy to align text
+void align(char* text,int x=30,int y=12.5)
 {
-	clrscr();
-	borders();
-	hr(4,'*');
-	center(word,2);
-	// dispArray(array,step,6);
-	for(int i=0;i<size;i++)
-	{
-		char word[50] = {i+49,'.'};				//Makes the list of items numbered
-		for(int j = 2; array[i][j-2]!='\0';j++)
-		{
-			word[j]=array[i][j-2];
-		}
-	 center(word,start+(i*step));
-	}
+	gotoxy(x,y);
+	cout<<text;
 }
-//Creates output screen with border and heading
-void createMenu(char* word,char array[50][50],int size=0,int step=3,int start=6)
+//Creates a menu with the given heading and the elements passed through the array
+void createMenu(char* word,char array[50][50]=NULL,int size=0,int step=3,int start=6)
 {
 	clrscr();
 	borders();
@@ -93,7 +82,7 @@ void createMenu(char* word,char array[50][50],int size=0,int step=3,int start=6)
 		{
 			word[j]=array[i][j-2];
 		}
-	 center(word,start+(i*step));
+	align(word,30,start+(i*step));
 	}
 }
 //Can be called to create a simple error screen
@@ -104,12 +93,7 @@ void delay(long i)
 		cout<<"";
 	}
 }
-//Simplified gotoxy to align text
-void align(char* text,int x,int y)
-{
-	gotoxy(x,y);
-	cout<<text;
-}
+
 
 void errormsg(char* error="null")
 {
@@ -132,39 +116,11 @@ void main()
 void memberMainMenu()
 {
 	clrscr();
-	for(int i=17;i<=52;i++)
-	{
-		gotoxy(i,0);
-		cout<<"*";
-	}
-	for(i=0;i<=11;i++)
-	{
-		gotoxy(17,i);
-		cout<<"*";
-	}
-	for(i=17;i<=52;i++)
-	{
-		gotoxy(i,11);
-		cout<<"*";
-	}
-	for(i=0;i<=11;i++)
-	{
-		gotoxy(52,i);
-		cout<<"*";
-	}
-	gotoxy(25,2);
-	cout<<"MEMBER ADMINISTRATION"<<endl;
+	char mainmenu[][50]={"ADD NEW MEMBERS","SEARCH MEMBERS","DISPLAY MEMBERS","EXIT"};
+	createMenu("MEMBER ADMINISTRATION",mainmenu,ArraySize(mainmenu));
+	gotoxy(30,20);
+	cout<<"CHOOSE AN OPTION ABOVE: ";
 	int option;
-	gotoxy(20,4);
-	cout<<"1. ADD NEW MEMBERS"<<endl;
-	gotoxy(20,5);
-	cout<<"2.SEARCH MEMBERS"<<endl;
-	gotoxy(20,6);
-	cout<<"3.Display details of all members"<<endl;
-	gotoxy(20,7);
-	cout<<"4.EXIT"<<endl;
-	gotoxy(20,10);
-	cout<<"CHOOSE AN OPTION ABOVE:"<<" ";
 	cin>>option;
 	char wait;
 	switch(option)
@@ -182,9 +138,7 @@ void memberMainMenu()
 			displayMembers();
 			break;
 		case 4: 
-			clrscr();
-			mainmenu();
-			break;
+			return;
 		default:
 			clrscr();
 			gotoxy(25,10);
@@ -680,39 +634,12 @@ void searchBookauthor()
 }
 void mainmenu()
 {
-	clrscr();
-	for(int i=17;i<=52;i++)
-	{
-		gotoxy(i,0);
-		cout<<"*";
-	}
-	for(i=0;i<=11;i++)
-	{
-		gotoxy(17,i);
-		cout<<"*";
-	}
-	for(i=17;i<=52;i++)
-	{
-		gotoxy(i,11);
-		cout<<"*";
-	}
-	for(i=0;i<=11;i++)
-	{
-		gotoxy(52,i);
-		cout<<"*";
-	}
-
-	gotoxy(25,2);
-	cout<<"LIBRARY MENU"<<endl;
+start:
+	borders();
+	char menu[][50]={"MEMBER ADMINISTRATION","BOOK ADMINISTRATION","EXIT"};
+	createMenu("LIBRARY MENU",menu,ArraySize(menu));
+	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	int option;
-	gotoxy(20,4);
-	cout<<"1.MEMBER ADMINISTRATION"<<endl;
-	gotoxy(20,5);
-	cout<<"2.BOOK ADMINISTRATION"<<endl;
-	gotoxy(20,6);
-	cout<<"3.EXIT"<<endl;
-	gotoxy(20,9);
-	cout<<"CHOOSE AN OPTION ABOVE:"<<" ";
 	cin>>option;
 	char wait;
 	switch(option)
@@ -724,7 +651,7 @@ void mainmenu()
 	case 2:
 		clrscr();
 		bookmainmenu();
-		break;
+		goto start;
 	case 3:
 		clrscr();
 		break;
