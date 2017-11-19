@@ -21,6 +21,7 @@ void searchbooks();
 void searchBookID();
 void searchBookname();
 void searchBookauthor();
+void issueBook(long);
 //************************************************************************************************
 //Display Functions
 //************************************************************************************************
@@ -158,11 +159,14 @@ class Member                   //Basic class for MEMBERS of the system
 public:
 	char Name[20];
 	long Telno ;
+	long borrowedBooks[10];
+	int bbIndex;
 	float fee;
 	float payment;
 	int MemID;
 	void getmembers();
 	void showmembers();
+	
 };
 
 void addmembers()                        //Function to Add new members
@@ -203,6 +207,7 @@ void Member :: getmembers()              //Member Function to obtain intial deta
 	cin>> Telno;
 	cout<< "Membership Package (BD-5/month (3 books/week),BD-3/month(2 books/week),BD-1/month(1 books/week)) enter the price of the package required"<<" "<<"BD";
 	cin>>fee;
+	bbIndex=-1;
 }
 void Member :: showmembers()            //Member Function to show intial details of members
 {
@@ -544,7 +549,9 @@ void searchBookID()
 	if(ID==B.bookID)
 	{
 		B.showbookdata();
-		j=1;
+		gotoxy(15,23);
+		cout<<"Press 2 to issue book:  ";
+		cin>>j;
 
 	}
 	fin.close();
@@ -558,8 +565,16 @@ void searchBookID()
 		cin>>wait;
 		bookmainmenu();
 	}
+	else if(j==2)
+	{
+		issueBook(B.bookID);
+		bookmainmenu();
+	}
 	else
 	{
+		if(j==2)
+			issueBook(B.bookID);
+		gotoxy(55,23);
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
 		bookmainmenu();
@@ -580,7 +595,9 @@ void searchBookname()
 		if(strcmp(B.Title,name)==0)
 		{
 			B.showbookdata();
-			j=1;
+			gotoxy(15,23);
+			cout<<"Press 2 to issue book:  ";
+			cin>>j;
 		}
 	fin.close();
 	if(j==0)
@@ -594,7 +611,10 @@ void searchBookname()
 	}
 	else
 	{
-		cout<<"ENTER any key to continue:"<<" ";
+		if(j==2)
+			issueBook(B.bookID);
+		gotoxy(55,23);
+		cout<<"ENTER any key to continue: ";
 		cin>>wait;
 		memberMainMenu();
 	}
@@ -613,7 +633,9 @@ void searchBookauthor()
 		if(strcmp(B.Author,name)==0)
 		{
 			B.showbookdata();
-			j=1;
+			gotoxy(15,23);
+			cout<<"Press 2 to issue book..";
+			cin>>j;
 		}
 	fin.close();
 	if(j==0)
@@ -627,11 +649,47 @@ void searchBookauthor()
 	}
 	else
 	{
+		if(j==2)
+			issueBook(B.bookID);
+		gotoxy(55,23);
 		cout<<"ENTER any key to continue:"<<" ";
 		cin>>wait;
 		bookmainmenu();
 	}
 }
+
+void issueBook(long bookId)
+{
+	int j=0;
+	Book B;
+	ifstream bookfile("books.dat", ios::in|ios::binary);
+	while(bookfile.read((char*)&B, sizeof(B)))
+		if(B.bookID == bookId)
+			j=1;
+	bookfile.close();
+	
+	Member M;
+	clrscr();
+	gotoxy(20,5);
+	cout<<"Enter member id: ";
+	int memId;
+	cin>>memId;
+	
+	ofstream outfile("members.dat", ios::app|ios::binary);
+	ifstream infile("members.dat", ios::in|ios::binary);
+		
+	while(infile.read((char*)&M, sizeof(M)))
+		if(M.MemID==memId && j==1)
+		{
+			M.borrowedBooks[++M.bbIndex]=bookId;
+			int loc= infile.tellg() - sizeof(Book);
+			outfile.seekp(loc, ios::beg);
+			outfile.write((char*)&M, sizeof(M));
+		}
+	outfile.close();
+	infile.close();
+}
+
 void mainmenu()
 {
 start:
