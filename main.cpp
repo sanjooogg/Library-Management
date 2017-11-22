@@ -1,4 +1,4 @@
-#include <iostream.h>                                                                                                                                                                                                                                                              #include<iostream.h>
+#include <iostream.h>
 #include <string.h>
 #include <conio.h>
 #include <string.h>
@@ -28,7 +28,7 @@ void searchBookauthor();
 //Creates horizontal line
 void hr(int i,char ch)
 {
-	for(int j=0;j<81;j++)
+	for(int j=0;j<80;j++)
 	{
 		gotoxy(j,i);
 		cout<<ch;
@@ -137,7 +137,7 @@ void memberMainMenu()
 			clrscr();
 			displayMembers();
 			break;
-		case 4: 
+		case 4:
 			return;
 		default:
 			clrscr();
@@ -168,23 +168,17 @@ public:
 void addmembers()                        //Function to Add new members
 {
 	clrscr();
+	borders();
 	char ch;
 	ofstream fout;
 	Member m;
-	int i,n;
 	fout.open("members.dat",ios::binary|ios::app);
-	cout<<"Enter the number of members you want to Add"<<endl;
-	cin>>n;
-	for(i=0;i<n;i++)
-	{
-		clrscr();
-		cout<<"Enter the details of the new member";
-		cout<<endl;
-		m.getmembers();
-		fout.write((char*)&m,sizeof(m));
-		cout<<"Member Added";
-		cout<<endl;
-	}
+	clrscr();
+	borders();
+	align("Enter the details of the new member: ",19,6);
+	m.getmembers();
+	fout.write((char*)&m,sizeof(m));
+	align("Member Added",19,8);
 	fout.close();
 	cout<<"Do you want to add more members?(Y/N)";
 	cin>> ch;
@@ -195,13 +189,20 @@ void addmembers()                        //Function to Add new members
 }
 void Member :: getmembers()              //Member Function to obtain intial details of members
 {
-	cout<<"Enter Member ID";
+	clrscr();
+	borders();
+	center("Enter Details",2);
+	align("Enter Member ID ",19,6);
 	cin>>MemID;
-	cout<<"Enter NAME:";
+	align("Enter NAME: ",19,8);
 	gets(Name);
-	cout<<"Enter Telephone number";
+	align("Enter Telephone number ",19,10);
 	cin>> Telno;
-	cout<< "Membership Package (BD-5/month (3 books/week),BD-3/month(2 books/week),BD-1/month(1 books/week)) enter the price of the package required"<<" "<<"BD";
+	align("Membership Package",19,12);
+	align("BD-5/month (3 books/week)",19,13);
+	align("BD-3/month(2 books/week)",19,14);
+	align("BD-1/month(1 books/week)",19,15);
+	align("enter the price of the package required BD: ",19,16);
 	cin>>fee;
 }
 void Member :: showmembers()            //Member Function to show intial details of members
@@ -306,7 +307,7 @@ void searchname()
 	fin.open("members.dat",ios::binary|ios::in);
 	Member S;
 	char name[20];
-	cout<<"Enter the Member’s name "<<endl;
+	cout<<"Enter the Member's name "<<endl;
 	gets(name);
 	while(fin.read((char*)&S,sizeof(S)))
 		if(strcmp(S.Name,name)==0)
@@ -351,7 +352,7 @@ void Book:: getbookdata()				 //Member Function to obtain intial details of book
 	cin>>bookID;
 	cout<<"Enter NAME:"<<endl;
 	gets(Title);
-	cout<<"Enter Author’s name:"<<endl;
+	cout<<"Enter Author's name:"<<endl;
 	gets(Author);
 	cout<<"Enter price of this book"<<endl;
 	cin>>price;
@@ -573,7 +574,7 @@ void searchBookname()
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
 	char name[20];
-	cout<<"Enter the Book’s name:"<<" ";
+	cout<<"Enter the Book's name:"<<" ";
 	gets(name);
 	cout<<endl;
 	while(fin.read((char*)&B,sizeof(B)))
