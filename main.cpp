@@ -9,6 +9,7 @@
 #define ArraySize(array)	sizeof(array)/sizeof(array[0])
 long speedglobal=4500;
 void callmainmenu();
+int checkIDexist(int);
 void mainmenu();
 void searchID();
 void searchname();
@@ -194,11 +195,35 @@ void addmembers()                        //Function to Add new members
 	}	
 
 }
-void Member :: getmembers()              //Member Function to obtain intial details of members
+int checkIDexist(int ID)
 {
+	ifstream fin;
+	fin.open("members.dat",ios::binary|ios::in);
+	fin.seekg(0,ios::beg);
+	Member m;
+	while(fin.read((char*)&m,sizeof(m)));
+	{
+		if(ID==m.MemID)
+		{
+			createMenu("Enter Details");
+			center("ID Number Exists Please try a different ID no:");
+			center("Press any key to try again",20);
+			getch();
+			return 1;
+		}
+	
+	}
+	return 0; 
+}
+void Member :: getmembers()              //Member Function to obtain intial details of members
+{	
 	createMenu("Enter Details");
 	align("Enter Member ID ",19,6);
 	cin>>MemID;
+	int i;
+	i=checkIDexist(MemID);
+	if(i==1)
+		getmembers();
 	align("Enter NAME: ",19,8);
 	gets(Name);
 	align("Enter Telephone number ",19,10);
