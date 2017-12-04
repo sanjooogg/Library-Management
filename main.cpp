@@ -8,6 +8,7 @@
 #include <stdio.h>
 #define ArraySize(array)	sizeof(array)/sizeof(array[0])
 long speedglobal=4500;
+void callmainmenu();
 void mainmenu();
 void searchID();
 void searchname();
@@ -110,17 +111,21 @@ void errormsg(char* error="null")
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void callmainmenu()
+{
+	mainmenu();
+}
+
 void main()
 {
 	mainmenu();
 }
 void memberMainMenu()
-{
+{	start:
 	clrscr();
-	char mainmenu[][50]={"ADD NEW MEMBERS","SEARCH MEMBERS","DISPLAY MEMBERS","EXIT"};
-	createMenu("MEMBER ADMINISTRATION",mainmenu,ArraySize(mainmenu));
-	gotoxy(30,20);
-	cout<<"CHOOSE AN OPTION ABOVE: ";
+	char membermainmenu[][50]={"ADD NEW MEMBERS","SEARCH MEMBERS","DISPLAY MEMBERS","EXIT"};
+	createMenu("MEMBER ADMINISTRATION",membermainmenu,ArraySize(membermainmenu));
+	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	int option;
 	cin>>option;
 	char wait;
@@ -139,18 +144,12 @@ void memberMainMenu()
 			displayMembers();
 			break;
 		case 4:
-			return;
+			callmainmenu();
 		default:
-			clrscr();
-			gotoxy(25,10);
-			cout<<"INVALID CHOICE";
-			gotoxy(25,12);
-			cout<<"CHOOSE AGAIN";
-			gotoxy(18,14);
-			cout<<"ENTER any key to continue";
-			cin>>wait;
-			memberMainMenu();
-			break;
+			errormsg("Invalid option");
+			goto start;
+
+			
 	}
 }
 
@@ -171,89 +170,96 @@ public:
 
 void addmembers()                        //Function to Add new members
 {
-	clrscr();
-	borders();
 	char ch;
 	ofstream fout;
 	Member m;
 	fout.open("members.dat",ios::binary|ios::app);
-	clrscr();
-	borders();
-	align("Enter the details of the new member: ",19,6);
 	m.getmembers();
 	fout.write((char*)&m,sizeof(m));
-	align("Member Added",19,8);
+	createMenu("Enter Details");
+	center("Member Added",8);
 	fout.close();
-	cout<<"Do you want to add more members?(Y/N)";
+	start:
+	center("Do you want to add more members?(Y/N)",10);
 	cin>> ch;
 	if(ch=='Y' || ch=='y')
 		addmembers();
-	else
+	else if (ch=='N'||ch=='n')
 		memberMainMenu();
+	else
+	{	
+		errormsg("Invalid opration");
+		createMenu("Enter Details");
+		goto start;
+	}	
+
 }
 void Member :: getmembers()              //Member Function to obtain intial details of members
 {
-	clrscr();
-	borders();
-	center("Enter Details",2);
+	createMenu("Enter Details");
 	align("Enter Member ID ",19,6);
 	cin>>MemID;
 	align("Enter NAME: ",19,8);
 	gets(Name);
 	align("Enter Telephone number ",19,10);
 	cin>> Telno;
+	start:
 	align("Membership Package",19,12);
 	align("BD-5/month (3 books/week)",19,13);
 	align("BD-3/month(2 books/week)",19,14);
 	align("BD-1/month(1 books/week)",19,15);
 	align("enter the price of the package required BD: ",19,16);
 	cin>>fee;
+	if (fee!=5 && fee!=3 && fee!=1)
+		{
+			errormsg("Package not available");
+			createMenu("Enter Details");
+			goto start;
+
+		}
 	bbIndex=-1;
 }
 void Member :: showmembers()            //Member Function to show intial details of members
 {
-	cout<<"Member Details";
-	cout<<endl;
-	cout<<"Member ID:"<<" "<<MemID;
-	cout<<endl;
-	cout<<"Name:"<<""<<Name;
-	cout<<endl;
-	cout<<"Telephone Number:"<<" "<<Telno;
-	cout<<endl;
-	cout<<"Membership package:"<<"BD-"<<fee;
-	cout<<endl;
+	createMenu("Member Details");
+	align("Member ID: ",19,6);
+	cout<<MemID;
+	align("Name: ",19,8);
+	cout<<Name;
+	align("Telephone Number: ",19,10);
+	cout<<Telno;
+	align("Membership package: BD-",19,12);
+	cout<<fee;
 }
 void displayMembers()
 {
-	char wait;
 	clrscr();
 	ifstream fin;
 	fin.open("members.dat",ios::binary|ios::in);
 	Member M;
+	fin.seekg(0,ios::end);
+	int count=fin.tellg()/sizeof(M),i=0;
+	fin.seekg(0);
 	while(fin.read((char*)&M,sizeof(M)))
 	{
 		M.showmembers();
-		cout<<endl;
+		align("Member ",19,14);
+		cout<<++i<<" of "<<count;
+		getch();
 	}
 	fin.close();
 	cout<<endl;
-	cout<<"\nENTER any key to continue:"<<" ";
-	cin>>wait;
+	align("ENTER any key to continue: ",19,16);
+	getch();
 	memberMainMenu();
 }
 
 void searchMembers()
-{
+{	start:
 	int op;
-	cout<<"How would you like to search for the member?"<<endl;
-	gotoxy(25,3);
-	cout<<"1.By Member ID";
-	gotoxy(25,4);
-	cout<<"2.By Name";
-	gotoxy(25,5);
-	cout<<"3.Back";
-	gotoxy(15,7);
-	cout<<"CHOOSE AN OPTION:"<<"";
+	char searchmember[][50]={"By Member ID","By Name","Exit"};
+	createMenu("Search Member",searchmember,ArraySize(searchmember));
+	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	cin>>op;
 	switch(op)
 	{
@@ -269,17 +275,22 @@ void searchMembers()
 		clrscr();
 		memberMainMenu();
 		break;
+	default:
+		errormsg("invalid option");
+		goto start;
+
 	}
 }
 void searchID()
-{
+{	
 	ifstream fin;
 	fin.open("members.dat",ios::binary|ios::in);
 	Member S;
 	int j=0;
 	char wait;
 	int ID;
-	cout<<"Enter the Member ID "<<endl;
+	createMenu("Search by ID");
+	align("Enter the Member ID ",20,6);
 	cin>>ID;
 	while(fin.read((char*)&S,sizeof(S)) )
 		if(ID==S.MemID)
@@ -289,19 +300,17 @@ void searchID()
 		}
 	if(j==0)
 	{
-		clrscr();
-		cout<<ID;
-		cout<<" "<<"DOES NOT EXIST"<<endl;
-		cout<<endl;
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		memberMainMenu();
+		createMenu("Search by ID");
+		center("DOES NOT EXIST");
+		center("ENTER any key to continue:",20);
+		getch();
+		searchMembers();
 	}
 	else
 	{
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		memberMainMenu();
+		center("ENTER any key to continue:",20);
+		getch();
+		searchMembers();
 	}
 }
 void searchname()
@@ -312,7 +321,8 @@ void searchname()
 	fin.open("members.dat",ios::binary|ios::in);
 	Member S;
 	char name[20];
-	cout<<"Enter the Member's name "<<endl;
+	createMenu("Search by Name");
+	align("Enter the Member Name ",20,6);
 	gets(name);
 	while(fin.read((char*)&S,sizeof(S)))
 		if(strcmp(S.Name,name)==0)
@@ -321,19 +331,18 @@ void searchname()
 			j=1;
 		}
 	if(j==0)
-	{
-		clrscr();
-		cout<<name<<" "<<"DOES NOT EXIST"<<endl;
-		cout<<endl;
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		memberMainMenu();
+	{	
+		createMenu("Search by Name");
+		center("DOES NOT EXIST");
+		center("ENTER any key to continue:",20);
+		getch();
+		searchMembers();
 	}
 	else
 	{
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		memberMainMenu();
+		center("ENTER any key to continue:",20);
+		getch();
+		searchMembers();
 	}
 }
 
@@ -710,9 +719,13 @@ start:
 	case 2:
 		clrscr();
 		bookmainmenu();
-		goto start;
+		break;
 	case 3:
 		clrscr();
 		break;
+	default:
+	    errormsg("Invalid option");
+		goto start;
+		
 	}
 }
