@@ -120,6 +120,7 @@ void callmainmenu()
 void main()
 {
 	mainmenu();
+	exit(1);
 }
 void memberMainMenu()
 {	start:
@@ -145,12 +146,12 @@ void memberMainMenu()
 			displayMembers();
 			break;
 		case 4:
-			callmainmenu();
+			return;
 		default:
 			errormsg("Invalid option");
 			goto start;
 
-			
+
 	}
 }
 
@@ -166,7 +167,7 @@ public:
 	int MemID;
 	void getmembers();
 	void showmembers();
-	
+
 };
 
 void addmembers()                        //Function to Add new members
@@ -188,11 +189,11 @@ void addmembers()                        //Function to Add new members
 	else if (ch=='N'||ch=='n')
 		memberMainMenu();
 	else
-	{	
-		errormsg("Invalid opration");
+	{
+		errormsg("Invalid operation");
 		createMenu("Enter Details");
 		goto start;
-	}	
+	}
 
 }
 int checkIDexist(int ID)
@@ -211,19 +212,20 @@ int checkIDexist(int ID)
 			getch();
 			return 1;
 		}
-	
+
 	}
-	return 0; 
+	fin.close();
+	return 0;
 }
 void Member :: getmembers()              //Member Function to obtain intial details of members
-{	
+{       start1:
 	createMenu("Enter Details");
 	align("Enter Member ID ",19,6);
 	cin>>MemID;
 	int i;
 	i=checkIDexist(MemID);
 	if(i==1)
-		getmembers();
+	       goto start1;
 	align("Enter NAME: ",19,8);
 	gets(Name);
 	align("Enter Telephone number ",19,10);
@@ -290,13 +292,13 @@ void searchMembers()
 	{
 	case 1:
 		clrscr();
-	 	searchID();
+		searchID();
 		break;
-	case 2: 
+	case 2:
 		clrscr();
 		searchname();
 		break;
-	case 3: 
+	case 3:
 		clrscr();
 		memberMainMenu();
 		break;
@@ -307,7 +309,7 @@ void searchMembers()
 	}
 }
 void searchID()
-{	
+{
 	ifstream fin;
 	fin.open("members.dat",ios::binary|ios::in);
 	Member S;
@@ -356,7 +358,7 @@ void searchname()
 			j=1;
 		}
 	if(j==0)
-	{	
+	{
 		createMenu("Search by Name");
 		center("DOES NOT EXIST");
 		center("ENTER any key to continue:",20);
@@ -387,72 +389,45 @@ public:
 };
 void Book:: getbookdata()				 //Member Function to obtain intial details of books
 {
-	cout<<"Enter Book ID:"<<endl;
+	createMenu("Enter Details");
+
+	align("Enter Book ID: ",19,6);
 	cin>>bookID;
-	cout<<"Enter NAME:"<<endl;
+	align("Enter NAME: ",19,8);
 	gets(Title);
-	cout<<"Enter Author's name:"<<endl;
+	align("Enter Author's name: ",19,10);
 	gets(Author);
-	cout<<"Enter price of this book"<<endl;
+	align("Enter price of this book ",19,12);
 	cin>>price;
-	cout<<"Enter the no of this book the library owns"<<endl;
+	align("Enter the no of this book the library owns ",19,14);
 	cin>>Qty;
 	Qtyavailable=Qty;
 }
 
 void Book :: showbookdata()            //Member Function to show intial details of books
 {
-	cout<<"Book Details";
-	cout<<endl;
-	cout<<"Book ID:"<<" "<<bookID;
-	cout<<endl;
-	cout<<"Name:"<<" "<<Title;
-	cout<<endl;
-	cout<<"Author"<<" "<<Author;
-	cout<<endl;
-	cout<<"Price of this book:"<<" "<<"BD-"<<price;
-	cout<<endl;
-	cout<<"Quantity of this book the library owns:"<<" "<<Qty;
-	cout<<endl;
-	cout<<"Quantity of the book available:"<<" "<<Qtyavailable;
-	cout<<endl;
+	createMenu("Book Details");
+	align("Book ID ",19,6);
+	cout<<bookID;
+	align("Name: ",19,8);
+	cout<<Title;
+	align("Author",19,10);
+	cout<<Author;
+	align("Price of this book: ",19,12);
+	cout<<"BD-"<<price;
+	align("Quantity of this book the library owns: ",19,14);
+	cout<<Qty;
+	align("Quantity of the book available: ",19,16);
+	cout<<Qtyavailable;
+
 }
 void bookmainmenu()
 {
-	clrscr();
-	for(int i=17;i<=52;i++)
-	{
-		gotoxy(i,0);
-		cout<<"*";
-	}
-	for(i=0;i<=11;i++)
-	{
-		gotoxy(17,i);
-		cout<<"*";
-	}
-	for(i=17;i<=52;i++)
-	{
-		gotoxy(i,11);
-		cout<<"*";
-	}
-	for(i=0;i<=11;i++)
-	{
-		gotoxy(52,i);
-		cout<<"*";
-	}
-	gotoxy(25,2);
-	cout<<"BOOK ADMINISTRATION"<<endl;
+	start:
 	int option;
-	gotoxy(20,4);
-	cout<<"1.ADD NEW BOOKS"<<endl;
-	gotoxy(20,5);
-	cout<<"2.SEARCH BOOKS"<<endl;
-	gotoxy(20,6);
-	cout<<"3.Display details of all books"<<endl;
-	gotoxy(20,7);
-	cout<<"4.EXIT"<<endl;
-	gotoxy(20,10);
-	cout<<"CHOOSE AN OPTION ABOVE:"<<" ";
+	char bookmainmenu [][50]={"ADD NEW BOOKS","SEARCH BOOKS","Display details of all books","EXIT"};
+	createMenu("Book Administration",bookmainmenu,ArraySize(bookmainmenu));
+	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	cin>>option;
 	char wait;
 	switch(option)
@@ -470,85 +445,70 @@ void bookmainmenu()
 		displayBooks();
 		break;
 	case 4:
-		clrscr();
-		mainmenu();
-		break;
+		return;
 	default:
-		clrscr();
-		gotoxy(25,10);
-		cout<<"INVALID CHOICE";
-		gotoxy(25,12);
-		cout<<"CHOOSE AGAIN";
-		gotoxy(18,14);
-		cout<<"ENTER any key to continue";
-		cin>>wait;
-		bookmainmenu();
-		break;
+		errormsg("Invalid Option");
+		goto start;
+
 	}
 }
 
 void addBooks()                        //Function to Add new members
 {
-	clrscr();
 	char ch;
 	ofstream fout;
 	Book b;
-	int i,n;
 	fout.open("books.dat",ios::binary|ios::app);
-	cout<<"Enter the different number of Books you want to Add"<<endl;
-	cin>>n;
-	for(i=0;i<n;i++)
-	{
-		clrscr();
-		cout<<"Enter the details of the new Book";
-		cout<<endl;
-		b.getbookdata();
-		fout.write((char*)&b,sizeof(b));
-		cout<<"Book Added";
-		cout<<endl;
-	}
+	b.getbookdata();
+	fout.write((char*)&b,sizeof(b));
+	createMenu("Enter Details");
+	center("Book Added",8);
 	fout.close();
-	cout<<"Do you want to add more books?(Y/N)";
+	start:
+	center("Do you want to add more books?(Y/N)",10);
 	cin>> ch;
 	if(ch=='Y' || ch=='y')
 		addBooks();
-	else
+	else if (ch=='N'|| ch=='n')
 		bookmainmenu();
+	else
+	{
+		errormsg("Invalid operation");
+		createMenu("Enter Details");
+		goto start;
+	}
 }
 
 void displayBooks()
 {
-	char wait;
 	clrscr();
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book b;
+	fin.seekg(0,ios::end);
+	int count=fin.tellg()/sizeof(b),i=0;
+	fin.seekg(0);
 	while(fin.read((char*)&b,sizeof(b)))
 	{
 		b.showbookdata();
-		cout<<endl;
+		align("Book ",19,18);
+		cout<<++i<<" of "<<count;
+		getch();
 	}
 	fin.close();
 	cout<<endl;
-	cout<<"\nENTER any key to continue:"<<" ";
-	cin>>wait;
+	align("ENTER any key to continue: ",19,20);
+	getch();
 	bookmainmenu();
 }
 
 void searchbooks()
 {
+start:
+	char searchbook[][50]={"BY BOOK ID","BY NAME","BY AUTHOR","EXIT"};
+	createMenu("SEARCH BOOK",searchbook,ArraySize(searchbook));
+	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	int op;
-	cout<<"How would you like to search for the member?"<<endl;
-	gotoxy(25,3);
-	cout<<"1.By Book ID";
-	gotoxy(25,4);
-	cout<<"2.By Name";
-	gotoxy(25,5);
-	cout<<"3.By Author";
-	gotoxy(25,6);
-	cout<<"4.BACK";
-	gotoxy(15,8);
-	cout<<"CHOOSE AN OPTION:"<<"";
 	cin>>op;
 	switch(op)
 	{
@@ -568,10 +528,14 @@ void searchbooks()
 		clrscr();
 		bookmainmenu();
 		break;
+	default:
+		errormsg("invalid option");
+		goto start;
 	}
 }
 void searchBookID()
 {
+	createMenu("SEARCH");
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
@@ -702,17 +666,17 @@ void issueBook(long bookId)
 		if(B.bookID == bookId)
 			j=1;
 	bookfile.close();
-	
+
 	Member M;
 	clrscr();
 	gotoxy(20,5);
 	cout<<"Enter member id: ";
 	int memId;
 	cin>>memId;
-	
+
 	ofstream outfile("members.dat", ios::app|ios::binary);
 	ifstream infile("members.dat", ios::in|ios::binary);
-		
+
 	while(infile.read((char*)&M, sizeof(M)))
 		if(M.MemID==memId && j==1)
 		{
@@ -747,10 +711,13 @@ start:
 		break;
 	case 3:
 		clrscr();
+		return;
 		break;
+
 	default:
 	    errormsg("Invalid option");
 		goto start;
-		
+
 	}
+	goto start;
 }
