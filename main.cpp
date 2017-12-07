@@ -17,6 +17,7 @@ void memberMainMenu();
 void searchMembers();
 void displayMembers();
 void addmembers();
+int checkbookIDexist(int);
 void addBooks();
 void displayBooks();
 void searchbooks();
@@ -24,6 +25,11 @@ void searchBookID();
 void searchBookname();
 void searchBookauthor();
 void issueBook(long);
+void returnbook();
+void addUser();
+char* getpass();
+void login();
+char* encrypt(char pass[]);
 //************************************************************************************************
 //Display Functions
 //************************************************************************************************
@@ -196,7 +202,7 @@ void addmembers()                        //Function to Add new members
 	}
 
 }
-int checkIDexist(int ID)
+int checkmemberIDexist(int ID)
 {
 	ifstream fin;
 	fin.open("members.dat",ios::binary|ios::in);
@@ -223,7 +229,7 @@ void Member :: getmembers()              //Member Function to obtain intial deta
 	align("Enter Member ID ",19,6);
 	cin>>MemID;
 	int i;
-	i=checkIDexist(MemID);
+	i=checkmemberIDexist(MemID);
 	if(i==1)
 	       goto start1;
 	align("Enter NAME: ",19,8);
@@ -388,11 +394,14 @@ public:
 
 };
 void Book:: getbookdata()				 //Member Function to obtain intial details of books
-{
+{	start:
 	createMenu("Enter Details");
-
 	align("Enter Book ID: ",19,6);
 	cin>>bookID;
+	int i;
+	i=checkbookIDexist();
+	if(i==1)
+		goto start;
 	align("Enter NAME: ",19,8);
 	gets(Title);
 	align("Enter Author's name: ",19,10);
@@ -425,7 +434,7 @@ void bookmainmenu()
 {
 	start:
 	int option;
-	char bookmainmenu [][50]={"ADD NEW BOOKS","SEARCH BOOKS","Display details of all books","EXIT"};
+	char bookmainmenu [][50]={"ADD NEW BOOKS","SEARCH BOOKS","Display details of all books","Issue Book","EXIT"};
 	createMenu("Book Administration",bookmainmenu,ArraySize(bookmainmenu));
 	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	cin>>option;
@@ -445,12 +454,36 @@ void bookmainmenu()
 		displayBooks();
 		break;
 	case 4:
+		clrscr();
+		searchbooks();
+	case 5:
 		return;
 	default:
 		errormsg("Invalid Option");
 		goto start;
 
 	}
+}
+int checkbookIDexist(int ID)
+{
+	ifstream fin;
+	fin.open("books.dat",ios::binary|ios::in);
+	fin.seekg(0,ios::beg);
+	Member m;
+	while(fin.read((char*)&m,sizeof(m)));
+	{
+		if(ID==m.MemID)
+		{
+			createMenu("Enter Details");
+			center("ID Number Exists Please try a different ID no:");
+			center("Press any key to try again",20);
+			getch();
+			return 1;
+		}
+
+	}
+	fin.close();
+	return 0;
 }
 
 void addBooks()                        //Function to Add new members
@@ -482,6 +515,7 @@ void addBooks()                        //Function to Add new members
 void displayBooks()
 {
 	clrscr();
+	int j;
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book b;
@@ -493,7 +527,12 @@ void displayBooks()
 		b.showbookdata();
 		align("Book ",19,18);
 		cout<<++i<<" of "<<count;
-		getch();
+		center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+		cin>>j;
+		if(j==2)
+	{
+		issueBook(b.bookID);
+	}
 	}
 	fin.close();
 	cout<<endl;
@@ -535,142 +574,135 @@ start:
 }
 void searchBookID()
 {
-	createMenu("SEARCH");
+	createMenu("Search by ID");
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
-	int j=0;
+	int j=0,k;
 	char wait;
 	int ID;
-	cout<<"Enter the Book ID "<<endl;
+	align("Enter the Book ID ",20,6);
 	cin>>ID;
 	while(fin.read((char*)&B,sizeof(B)) )
 	if(ID==B.bookID)
 	{
 		B.showbookdata();
-		gotoxy(15,23);
-		cout<<"Press 2 to issue book:  ";
-		cin>>j;
-
+		center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+		cin>>k;
+		j=1;
 	}
 	fin.close();
 	if(j==0)
 	{
-		clrscr();
-		cout<<ID;
-		cout<<" "<<"DOES NOT EXIST"<<endl;
-		cout<<endl;
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		bookmainmenu();
+		createMenu("Search by ID");
+		center("DOES NOT EXIST");
+		center("ENTER any key to continue:",20);
+		getch();
+		searchbooks();
 	}
-	else if(j==2)
+	if(k==2)
 	{
 		issueBook(B.bookID);
-		bookmainmenu();
-	}
-	else
-	{
-		if(j==2)
-			issueBook(B.bookID);
-		gotoxy(55,23);
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		bookmainmenu();
+		searchbooks();
 	}
 }
 void searchBookname()
 {
 	char wait;
-	int j=0;
+	createMenu("Search by Name");
+	int j=0,k;
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
 	char name[20];
-	cout<<"Enter the Book's name:"<<" ";
+	align("Enter the Book's Name ",20,6);
 	gets(name);
-	cout<<endl;
 	while(fin.read((char*)&B,sizeof(B)))
 		if(strcmp(B.Title,name)==0)
 		{
 			B.showbookdata();
-			gotoxy(15,23);
-			cout<<"Press 2 to issue book:  ";
-			cin>>j;
+			center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+			cin>>k;
+			j=1;
 		}
 	fin.close();
 	if(j==0)
 	{
-		clrscr();
-		cout<<name<<" "<<"IS NOT OWNED BY US"<<endl;
-		cout<<endl;
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		bookmainmenu();
+		createMenu("Search by Name");
+		center("We don't own that book");
+		center("ENTER any key to continue:",20);
+		getch();
+		searchbooks();
 	}
-	else
-	{
-		if(j==2)
-			issueBook(B.bookID);
-		gotoxy(55,23);
-		cout<<"ENTER any key to continue: ";
-		cin>>wait;
-		memberMainMenu();
+	if(k==2)
+	{	
+		issueBook(B.bookID);
+		searchbooks();
 	}
 }
 void searchBookauthor()
 {
 	char wait;
-	int j=0;
+	createMenu("Search by Author");
+	int j=0,k;
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
 	char name[20];
-	cout<<"Enter the Author's name "<<endl;
+	align("Enter the Author's Name ",20,6);
 	gets(name);
 	while(fin.read((char*)&B,sizeof(B)))
 		if(strcmp(B.Author,name)==0)
 		{
 			B.showbookdata();
-			gotoxy(15,23);
-			cout<<"Press 2 to issue book..";
-			cin>>j;
+			center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+			cin>>k;
+			j=1;
 		}
 	fin.close();
 	if(j==0)
 	{
-		clrscr();
-		cout<<name<<"'s"<<" " <<"IS NOT OWNED BY US"<<endl;
-		cout<<endl;
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		bookmainmenu();
+		createMenu("Search by Name");
+		center("We don't own that Author's books");
+		center("ENTER any key to continue:",20);
+		getch();
+		searchbooks();
 	}
-	else
+	if(k==2)
 	{
-		if(j==2)
-			issueBook(B.bookID);
-		gotoxy(55,23);
-		cout<<"ENTER any key to continue:"<<" ";
-		cin>>wait;
-		bookmainmenu();
+	issueBook(B.bookID);
+	searchbooks();		
 	}
 }
 
 void issueBook(long bookId)
-{
+{	
+	createMenu("Book issueing");
 	int j=0;
 	Book B;
+	ofstream bookfile1("books.dat", ios::app|ios::binary);
 	ifstream bookfile("books.dat", ios::in|ios::binary);
 	while(bookfile.read((char*)&B, sizeof(B)))
 		if(B.bookID == bookId)
-			j=1;
+		{	if(B.Qtyavailable>=1)
+			{
+				j=1;
+				B.Qtyavailable-=1;
+				int loc= bookfile.tellg() - sizeof(B);
+				bookfile1.seekp(loc, ios::beg);
+				bookfile1.write((char*)&B, sizeof(B));
+			}
+			else
+			{
+				center("Book currently not available");
+				return;
+			}
+		}
 	bookfile.close();
+	
 
 	Member M;
-	clrscr();
-	gotoxy(20,5);
-	cout<<"Enter member id: ";
+	align("Enter member id: ",19,6);
 	int memId;
 	cin>>memId;
 
@@ -681,12 +713,178 @@ void issueBook(long bookId)
 		if(M.MemID==memId && j==1)
 		{
 			M.borrowedBooks[++M.bbIndex]=bookId;
-			int loc= infile.tellg() - sizeof(Book);
+			int loc= infile.tellg() - sizeof(M);
 			outfile.seekp(loc, ios::beg);
 			outfile.write((char*)&M, sizeof(M));
 		}
 	outfile.close();
 	infile.close();
+	createMenu("Book issueing");
+	center("The Book is borrowed");
+	center("ENTER any key to continue: ",20);
+	getch();
+
+}
+
+void returnbook()
+{	
+	Book B;
+	ofstream bookfile1("books.dat", ios::app|ios::binary);
+	ifstream bookfile("books.dat", ios::in|ios::binary);
+	ifstream fin;
+	fin.open("members.dat",ios::binary|ios::in);
+	Member S;
+	int j=0,k;
+	char wait;
+	int ID;
+	createMenu("Return Book");
+	align("Enter the Member ID ",20,6);
+	cin>>ID;
+	while(fin.read((char*)&S,sizeof(S)) )
+		if(ID==S.MemID)
+		{
+			S.showmembers();
+			j=1;
+			align("ENTER any key to continue: ",19,20);
+			getch();
+		}
+	if(j==0)
+	{
+		createMenu("Search by ID");
+		center("DOES NOT EXIST");
+		center("ENTER any key to continue:",20);
+		getch();
+		returnbook();
+	}
+	else
+	{
+		int l=0,a[10],b=0;
+		a[0]=S.bbIndex;
+		for(int i=0;i<S.bbIndex;i++)
+			while(bookfile.read((char*)&B, sizeof(B)))
+				if(B.bookID == S.borrowedBooks[i])
+					{   
+						B.showbookdata();
+						align("Book ",19,18);
+						cout<<++l<<" of "<<bbIndex-1;
+						center("Press 2 to return book press any other key and hit enter to continue checking borrowed :  ",20);
+						cin>>k;
+						if(k==2)
+						{	
+							a[b]=i;
+							b++;
+							B.Qtyavailable+=1;
+							int loc= bookfile.tellg() - sizeof(B);
+							bookfile1.seekp(loc, ios::beg);
+							bookfile1.write((char*)&B, sizeof(B));
+							createMenu("Return Book");
+							center("Book Returned");
+						}
+					}
+		if(a[0]!=S.bbIndex)
+			{	for(j=0;j<b;j++)
+					{
+						for(i=a[j];i<S.bbIndex;i++)
+							S.borrowedBooks[i]=S.borrowedBooks[i+1];
+						S.bbIndex-=1;
+					}
+			}
+	}
+
+}
+char* encrypt(char pass[])
+{
+	int i=0;
+	for(i=0;pass[i]!='\0';i++)
+		pass[i]+=strlen(pass);
+	return pass;
+}
+
+
+char* getpass()
+{
+	char pass[200];
+	int i=0;
+	while(1)
+	{
+	pass[i] = getch();
+	if(pass[i]==13)
+	{
+		pass[i]='\0';
+		break;
+	}
+	else if(i>=1 && pass[i]==8)  //Checks for backspace
+	{
+		i--;
+		gotoxy(46+i,12);
+		cout<<" ";
+		gotoxy(46+i,12);
+	}
+	else
+	{
+		cout<<'*';
+		i++;
+	}
+	}
+	return pass;
+}
+class user
+{
+	char uname[200];
+	char pass[200];
+public:
+  void input()
+  {
+	align("Enter Username: ",30,10);
+	gets(uname);
+	align("Enter Password: ",30,12);
+	strcpy(pass,getpass());
+	strcpy(pass,encrypt(pass));
+  }
+  int access(char ename[],char epass[])
+  {
+	int x=((strcmp(epass,pass)==0 && strcmp(ename,uname)==0)?1:0);
+	return x;
+  }
+};
+void addUser()
+{
+	user U;
+	U.input();
+	ofstream file;
+	file.open("users.dat",ios::app|ios::binary);
+	file.write((char*)&U,sizeof(U));
+	file.close();
+}
+void login()
+{
+ char uname[200],pass[200];
+ login:
+	 borders();
+	 align("LOGIN",36,7);
+	 align("Enter Username: ",30,10);
+	 gets(uname);
+	 align("Enter Password: ",30,12);
+	 strcpy(pass,getpass());
+	 strcpy(pass,encrypt(pass));
+	 ifstream file;
+	 file.open("users.dat",ios::in|ios::binary);
+	 user U;
+	 while(!file.eof())
+	 {
+		file.read((char*)&U,sizeof(U));
+		if(U.access(uname,pass))
+	  {
+		main_menu();
+	  }
+		else
+	  {
+		errormsg("Incorrect username or password");
+		clrscr();
+		goto
+		login;
+	  }
+	 }
 }
 
 void mainmenu()
