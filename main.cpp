@@ -26,7 +26,9 @@ void searchBookname();
 void searchBookauthor();
 void issueBook(long);
 void returnbook();
+void admin();
 void addUser();
+void removeUser();
 char* getpass();
 void login();
 char* encrypt(char pass[]);
@@ -125,7 +127,15 @@ void callmainmenu()
 
 void main()
 {
-	mainmenu();
+	fstream file;
+	file.open("users.dat",ios::in|ios::binary);
+	if(!file)
+	{
+		addUser();
+		mainmenu();
+		return;
+	};
+	login();
 	exit(1);
 }
 void memberMainMenu()
@@ -861,15 +871,6 @@ public:
 	return x;
   }
 };
-void addUser()
-{
-	user U;
-	U.input();
-	ofstream file;
-	file.open("users.dat",ios::app|ios::binary);
-	file.write((char*)&U,sizeof(U));
-	file.close();
-}
 void login()
 {
  char uname[200],pass[200];
@@ -900,12 +901,86 @@ void login()
 	  }
 	 }
 }
+void admin()
+{
+	start:
+	char accmenu[][50]={"ADD USER","REMOVE USER","EXIT"};
+	createMenu("ADMINISTRATOR",accmenu,ArraySize(accmenu),4);
+	align("Enter your option: ",30,20);
+	int opt;
+	cin>>opt;
+	switch(opt)
+	{
+		case 1:
+			addUser();
+			return;
+		case 2:
+			removeUser();
+			return;
+		case 3:
+			return;
+		default:
+			errormsg("Invalid Option...");
+			break;
+	}
+	goto start;
+}
+void addUser() //Function to add users
+{
+	user U;
+	createMenu("NEW USER");
+	U.input();
+	ofstream file;
+	file.open("users.dat",ios::app|ios::binary);
+	file.write((char*)&U,sizeof(U));
+	file.close();
+}
+void removeUser()
+{
+	user U;
+	createMenu("REMOVE USER");
+	char uname[200],pass[200];
+	align("Enter Username: ",30,7);
+	gets(uname);
+	align("Enter Username: ",30,9);
+	strcpy(pass,getpass());
+	strcpy(pass,encrypt(pass));
+	int p=0;
+	ifstream infile;
+	infile.open("users.dat",ios::in|ios::binary);
+	ofstream outfile,archive;
+	outfile.open("temp.dat",ios::app|ios::binary);
+	while(infile.read((char*)&U,sizeof(U)))
+	{
 
+		if(U.access(uname,pass))
+		{
+			p=1;
+			errormsg("USER REMOVED.....");
+			continue;
+		}
+		else
+		{
+			outfile.write((char*)&U,sizeof(U));
+		}
+	}
+	if(p==0)
+	{
+		align("Entry not found",30,14);
+		getch();
+	}
+	remove("users.dat");
+	rename("temp.dat","users.dat");
+	outfile.close();
+	infile.close();
+	return;
+
+}
 void mainmenu()
 {
 start:
 	borders();
-	char menu[][50]={"MEMBER ADMINISTRATION","BOOK ADMINISTRATION","EXIT"};
+	char menu[][50]={"LIBRARY ADMINISTRATION","MEMBER ADMINISTRATION","BOOK ADMINISTRATION","EXIT"};
 	createMenu("LIBRARY MENU",menu,ArraySize(menu));
 	align("CHOOSE AN OPTION ABOVE: ",30,20);
 	int option;
@@ -914,19 +989,22 @@ start:
 	switch(option)
 	{
 	case 1:
-		clrscr();
-		memberMainMenu();
+		admin();
 		break;
 	case 2:
-		clrscr();
-		bookmainmenu();
+		memberMainMenu();
 		break;
 	case 3:
+		bookmainmenu();
+		break;
+	case 4:
 		clrscr();
 		return;
 		break;
-	case 4:
+	case 5:
 		remove("books.dat");
+		remove("users.dat");
+		remove("members.dat");
 		break;
 
 	default:
