@@ -58,7 +58,7 @@ void vr(int i,char ch)
 //Creates borders
 void borders()
 {
-	char ch = '*';
+	char ch = '$';
 	hr(0,ch);
 	hr(25,ch);
 	vr(0,ch);
@@ -84,7 +84,7 @@ void createMenu(char* word,char array[50][50]=NULL,int size=0,int step=3,int sta
 {
 	clrscr();
 	borders();
-	hr(4,'*');
+	hr(4,'$');
 	center(word,2);
 	for(int i=0;i<size;i++)
 	{
@@ -144,24 +144,24 @@ void memberMainMenu()
 	char membermainmenu[][50]={"ADD NEW MEMBERS","SEARCH MEMBERS","DISPLAY MEMBERS","EXIT"};
 	createMenu("MEMBER ADMINISTRATION",membermainmenu,ArraySize(membermainmenu));
 	align("CHOOSE AN OPTION ABOVE: ",30,20);
-	int option;
-	cin>>option;
+	char option;
+	option = getch();
 	char wait;
 	switch(option)
 	{
-		case 1:
+		case '1':
 			clrscr();
 			addmembers();
 			break;
-		case 2:
+		case '2':
 			clrscr();
 			searchMembers();
 			break;
-		case 3:
+		case '3':
 			clrscr();
 			displayMembers();
 			break;
-		case 4:
+		case '4':
 			return;
 		default:
 			errormsg("Invalid option");
@@ -274,6 +274,8 @@ void Member :: showmembers()            //Member Function to show intial details
 	cout<<Telno;
 	align("Membership package: BD-",19,12);
 	cout<<fee;
+	align("Books borrowed : ",19,14);
+	cout<<bbIndex+1;
 }
 void displayMembers()
 {
@@ -287,35 +289,35 @@ void displayMembers()
 	while(fin.read((char*)&M,sizeof(M)))
 	{
 		M.showmembers();
-		align("Member ",19,14);
+		align("Member ",19,16);
 		cout<<++i<<" of "<<count;
 		getch();
 	}
 	fin.close();
 	cout<<endl;
-	align("ENTER any key to continue: ",19,16);
+	align("ENTER any key to continue: ",19,18);
 	getch();
 	memberMainMenu();
 }
 
 void searchMembers()
 {	start:
-	int op;
+	char op;
 	char searchmember[][50]={"By Member ID","By Name","Exit"};
 	createMenu("Search Member",searchmember,ArraySize(searchmember));
 	align("CHOOSE AN OPTION ABOVE: ",30,20);
-	cin>>op;
+	op=getch();
 	switch(op)
 	{
-	case 1:
+	case '1':
 		clrscr();
 		searchID();
 		break;
-	case 2:
+	case '2':
 		clrscr();
 		searchname();
 		break;
-	case 3:
+	case '3':
 		clrscr();
 		memberMainMenu();
 		break;
@@ -444,36 +446,36 @@ void Book :: showbookdata()            //Member Function to show intial details 
 void bookmainmenu()
 {
 	start:
-	int option;
+	char option;
 	char bookmainmenu [][50]={"ADD NEW BOOKS","SEARCH BOOKS","Display details of all books","Issue Book","Return book","EXIT"};
 	createMenu("Book Administration",bookmainmenu,ArraySize(bookmainmenu));
 	align("CHOOSE AN OPTION ABOVE: ",30,23);
-	cin>>option;
+	option=getch();
 	char wait;
 	switch(option)
 	{
-	case 1:
+	case '1':
 		clrscr();
 		addBooks();
 		break;
-	case 2:
+	case '2':
 		clrscr();
 		searchbooks();
 		break;
-	case 3:
+	case '3':
 		clrscr();
 		displayBooks();
 		break;
-	case 4:
+	case '4':
 		clrscr();
 		searchbooks();
 		break;
 
-	case 5:
+	case '5':
 		clrscr();
 		returnbook();
 		break;
-	case 6:
+	case '6':
 		return;
 
 	default:
@@ -546,7 +548,8 @@ void displayBooks()
 		b.showbookdata();
 		align("Book ",19,18);
 		cout<<++i<<" of "<<count;
-		center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+		center("Press 2 to issue book press any other key ",20);
+		center("and hit enter to continue : ",21 );
 		cin>>j;
 		if(j==2)
 	{
@@ -555,7 +558,7 @@ void displayBooks()
 	}
 	fin.close();
 	cout<<endl;
-	align("ENTER any key to continue: ",19,20);
+	align("ENTER any key to continue: ",19,22);
 	getch();
 	bookmainmenu();
 }
@@ -566,23 +569,23 @@ start:
 	char searchbook[][50]={"BY BOOK ID","BY NAME","BY AUTHOR","EXIT"};
 	createMenu("SEARCH BOOK",searchbook,ArraySize(searchbook));
 	align("CHOOSE AN OPTION ABOVE: ",30,20);
-	int op;
-	cin>>op;
+	char op;
+	op=getch();
 	switch(op)
 	{
-	case 1:
+	case '1':
 		clrscr();
 		searchBookID();
 		break;
-	case 2:
+	case '2':
 		clrscr();
 		searchBookname();
 		break;
-	case 3:
+	case '3':
 		clrscr();
 		searchBookauthor();
 		break;
-	case 4:
+	case '4':
 		clrscr();
 		bookmainmenu();
 		break;
@@ -607,7 +610,8 @@ void searchBookID()
 	if(ID==B.bookID)
 	{
 		B.showbookdata();
-		center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+		center("Press 2 to issue book press any other key ",18);
+		center("and hit enter to continue :  ",19);
 		cin>>k;
 		j=1;
 	}
@@ -641,7 +645,8 @@ void searchBookname()
 		if(strcmp(B.Title,name)==0)
 		{
 			B.showbookdata();
-			center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
+			center("Press 2 to issue book press any other key ",18);
+			center("and hit enter to continue :  ",19);
 			cin>>k;
 			j=1;
 		}
@@ -664,19 +669,21 @@ void searchBookauthor()
 {
 	char wait;
 	createMenu("Search by Author");
-	int j=0,k;
+	int j=0;
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
 	char name[20];
 	align("Enter the Author's Name ",20,6);
 	gets(name);
+	char opt;
 	while(fin.read((char*)&B,sizeof(B)))
 		if(strcmp(B.Author,name)==0)
 		{
 			B.showbookdata();
-			center("Press 2 to issue book press any other key and hit enter to continue :  ",18);
-			cin>>k;
+			center("Press 2 to issue book ",18);
+			center("Press any other key to continue :  ",19);
+			opt=getche();
 			j=1;
 		}
 	fin.close();
@@ -688,7 +695,7 @@ void searchBookauthor()
 		getch();
 		searchbooks();
 	}
-	if(k==2)
+	if(opt=='2')
 	{
 	issueBook(B.bookID);
 	searchbooks();
@@ -753,9 +760,10 @@ void returnbook()
 	ifstream bookfile("books.dat", ios::in|ios::binary);
 	ifstream fin;
 	fin.open("members.dat",ios::binary|ios::in);
+	ofstream fin1("members.dat",ios::binary|ios::in);
 	Member S;
-	int j=0,k;
-	char wait;
+	int j=0;
+	char opt,wait;
 	int ID;
 	createMenu("Return Book");
 	align("Enter the Member ID ",20,6);
@@ -789,10 +797,11 @@ void returnbook()
 						B.showbookdata();
 						align("Book ",19,18);
 						cout<<++l<<" of "<<S.bbIndex+1;
-						center("Press 2 to return book press any other key and hit enter to continue checking borrowed :  ",20);
-						cin>>k;
-						if(k==2)
-						{      cout<<"check";
+						center("Press 2 to return book ",20);
+						center("Press any other key to continue checking borrowed :  ",21);
+						opt=getche();
+						if(opt=='2')
+						{
 							a[b]=i;
 							b++;
 							B.Qtyavailable+=1;
@@ -806,13 +815,17 @@ void returnbook()
 						}
 					}
 		if(a[0]!=S.bbIndex)
-			{	for(j=0;j<b;j++)
+			{
+			for(j=0;j<b;j++)
 					{
 						for(i=a[j];i<S.bbIndex;i++)
 							S.borrowedBooks[i]=S.borrowedBooks[i+1];
 						S.bbIndex-=1;
 					}
 			}
+			int loc= fin.tellg() - sizeof(S);
+			fin1.seekp(loc, ios::beg);
+			fin1.write((char*)&S, sizeof(S));
 	}
 
 }
@@ -907,17 +920,17 @@ void admin()
 	char accmenu[][50]={"ADD USER","REMOVE USER","EXIT"};
 	createMenu("ADMINISTRATOR",accmenu,ArraySize(accmenu),4);
 	align("Enter your option: ",30,20);
-	int opt;
-	cin>>opt;
+	char opt;
+	opt=getch();
 	switch(opt)
 	{
-		case 1:
+		case '1':
 			addUser();
 			return;
-		case 2:
+		case '2':
 			removeUser();
 			return;
-		case 3:
+		case '3':
 			return;
 		default:
 			errormsg("Invalid Option...");
@@ -983,32 +996,32 @@ start:
 	char menu[][50]={"LIBRARY ADMINISTRATION","MEMBER ADMINISTRATION","BOOK ADMINISTRATION","EXIT"};
 	createMenu("LIBRARY MENU",menu,ArraySize(menu));
 	align("CHOOSE AN OPTION ABOVE: ",30,20);
-	int option;
-	cin>>option;
+	char option;
+	option=getch();
 	char wait;
 	switch(option)
 	{
-	case 1:
+	case '1':
 		admin();
 		break;
-	case 2:
+	case '2':
 		memberMainMenu();
 		break;
-	case 3:
+	case '3':
 		bookmainmenu();
 		break;
-	case 4:
+	case '4':
 		clrscr();
 		return;
 		break;
-	case 5:
+	case '5':
 		remove("books.dat");
 		remove("users.dat");
 		remove("members.dat");
 		break;
 
 	default:
-	    errormsg("Invalid option");
+		 errormsg("Invalid option");
 		goto start;
 
 	}
