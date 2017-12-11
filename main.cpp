@@ -32,10 +32,35 @@ void removeUser();
 char* getpass();
 void login();
 char* encrypt(char pass[]);
+void banner();
 //************************************************************************************************
 //Display Functions
 //************************************************************************************************
-
+void banner()
+{
+	ifstream file;
+	char str[500];
+	file.open("banner.txt");
+	while(!file)
+	{
+		cout<<"\nFile Not There";
+		getch();
+		return;
+	}
+	while(!file.eof())
+	{
+		cout<<endl;
+		file.getline(str,450,'\n');
+		int i=0;
+		while(str[i]!='\0')
+		{
+			cout<<str[i];
+			i++;
+			delay(195);
+		}
+	}
+	getch();
+}
 //Creates horizontal line
 void hr(int i,char ch)
 {
@@ -127,6 +152,7 @@ void callmainmenu()
 
 void main()
 {
+	banner();
 	fstream file;
 	file.open("users.dat",ios::in|ios::binary);
 	if(!file)
@@ -536,7 +562,7 @@ void addBooks()                        //Function to Add new members
 void displayBooks()
 {
 	clrscr();
-	int j;
+	char j;
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book b;
@@ -550,8 +576,8 @@ void displayBooks()
 		cout<<++i<<" of "<<count;
 		center("Press 2 to issue book press any other key ",20);
 		center("and hit enter to continue : ",21 );
-		cin>>j;
-		if(j==2)
+		j=getche();
+		if(j=='2')
 	{
 		issueBook(b.bookID);
 	}
@@ -601,8 +627,8 @@ void searchBookID()
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
-	int j=0,k;
-	char wait;
+	int j=0;
+	char wait,k;
 	int ID;
 	align("Enter the Book ID ",20,6);
 	cin>>ID;
@@ -612,7 +638,7 @@ void searchBookID()
 		B.showbookdata();
 		center("Press 2 to issue book press any other key ",18);
 		center("and hit enter to continue :  ",19);
-		cin>>k;
+		k=getche();
 		j=1;
 	}
 	fin.close();
@@ -624,7 +650,7 @@ void searchBookID()
 		getch();
 		searchbooks();
 	}
-	if(k==2)
+	if(k=='2')
 	{
 		issueBook(B.bookID);
 		searchbooks();
@@ -632,9 +658,9 @@ void searchBookID()
 }
 void searchBookname()
 {
-	char wait;
+	char wait,k;
 	createMenu("Search by Name");
-	int j=0,k;
+	int j=0;
 	ifstream fin;
 	fin.open("books.dat",ios::binary|ios::in);
 	Book B;
@@ -645,9 +671,9 @@ void searchBookname()
 		if(strcmp(B.Title,name)==0)
 		{
 			B.showbookdata();
-			center("Press 2 to issue book press any other key ",18);
-			center("and hit enter to continue :  ",19);
-			cin>>k;
+			center("Press 2 to issue book",18);
+			center("Press any other key continue :  ",19);
+			k=getche();
 			j=1;
 		}
 	fin.close();
@@ -659,7 +685,7 @@ void searchBookname()
 		getch();
 		searchbooks();
 	}
-	if(k==2)
+	if(k=='2')
 	{
 		issueBook(B.bookID);
 		searchbooks();
